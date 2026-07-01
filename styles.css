@@ -63,6 +63,7 @@ h1.hero-h em{font-style:italic;color:var(--brass)}
 /* ---------- portrait ---------- */
 .portrait{position:relative}
 .portrait .frame{position:relative;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5;background:linear-gradient(160deg,var(--forest),var(--ink))}
+.portrait .frame img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 .portrait .ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#e9e0cf;padding:24px}
 .portrait .ph .mono{width:78px;height:78px;border-radius:50%;border:1px solid rgba(233,224,207,.4);display:grid;place-items:center;font-family:'Newsreader',serif;font-size:1.7rem;margin:0 auto 16px}
 .portrait .ph small{display:block;margin-top:8px;color:rgba(233,224,207,.55);font-size:.78rem;letter-spacing:.04em}
