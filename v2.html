@@ -147,6 +147,31 @@ footer{background:var(--espresso);color:#d9cfc1;padding:64px 0 34px;position:rel
 .pill.show{transform:translate(-50%,0)}
 .pill:hover{background:var(--clay-2)}
 
+/* tactile press feedback (great on touch) */
+.btn:active{transform:scale(.96)}
+.card:active{transform:translateY(-2px) scale(.99)}
+.faq summary:active{color:var(--clay)}
+/* pause the marquee while a finger is on it */
+.marq:active .track{animation-play-state:paused}
+
+/* mobile hamburger + slide-in menu */
+.burger{display:none;width:48px;height:48px;border:1px solid var(--line);border-radius:14px;background:var(--card);flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:.2s}
+.burger:active{transform:scale(.94)}
+.burger span{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{position:fixed;top:0;right:0;bottom:0;width:min(84vw,360px);z-index:70;background:var(--bone);box-shadow:var(--shadow);transform:translateX(105%);transition:transform .4s cubic-bezier(.2,.8,.2,1);padding:104px 30px 40px;overflow-y:auto}
+.mobile-menu.open{transform:none}
+.mobile-menu nav{display:flex;flex-direction:column}
+.mobile-menu nav a{font-family:'Newsreader',serif;font-size:1.55rem;padding:18px 0;border-bottom:1px solid var(--line);color:var(--ink);transition:.22s}
+.mobile-menu nav a:active{color:var(--clay);padding-left:10px}
+.mobile-menu .btn{margin-top:26px;justify-content:center;font-size:1rem;border-bottom:0}
+.mobile-menu .mm-call{border-bottom:0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-size:.95rem;color:var(--moss);padding:14px 0 0}
+.scrim{position:fixed;inset:0;z-index:65;background:rgba(36,28,22,.42);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.scrim.open{opacity:1;visibility:visible}
+body.lock{overflow:hidden}
+
 /* reveal */
 .rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.3,1)}
 .rv.in{opacity:1;transform:none}
@@ -154,6 +179,7 @@ footer{background:var(--espresso);color:#d9cfc1;padding:64px 0 34px;position:rel
 @media(max-width:960px){
   .hero-grid{grid-template-columns:1fr;gap:48px}
   .menu{display:none}
+  .burger{display:flex}
   .quote-in{grid-template-columns:1fr;gap:34px}.quote{padding:48px 34px}
   .cards{grid-template-columns:1fr}
   .fg{grid-template-columns:1fr}
@@ -163,6 +189,7 @@ footer{background:var(--espresso);color:#d9cfc1;padding:64px 0 34px;position:rel
 @media(max-width:560px){
   .reviews{grid-template-columns:1fr}
   .util .hideS{display:none}
+  .hide-xs{display:none}
 }
 @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}.marq .track{animation:none}html{scroll-behavior:auto}}
 </style>
@@ -180,9 +207,25 @@ footer{background:var(--espresso);color:#d9cfc1;padding:64px 0 34px;position:rel
   <div class="wrap nav">
     <a class="brand" href="#top"><span class="seal">C</span><span><b>Cedric P. Collins</b><span>Attorney at Law</span></span></a>
     <nav class="menu"><a href="#help">Practice</a><a href="#about">About</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#cta">Contact</a></nav>
-    <div class="nav-cta"><a class="btn btn-clay" href="#cta">Free Consultation</a></div>
+    <div class="nav-cta">
+      <a class="btn btn-clay hide-xs" href="#cta">Free Consultation</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+    </div>
   </div>
 </header>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="mobile-menu" id="mobileMenu" aria-hidden="true" aria-label="Mobile navigation">
+  <nav>
+    <a href="#help">Practice</a>
+    <a href="#about">About</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#faq">FAQ</a>
+    <a href="#cta">Contact</a>
+    <a class="btn btn-clay" href="#cta">Book a free consult &rarr;</a>
+    <a class="mm-call" href="tel:+17408808510">or call (740) 880&#8202;8510</a>
+  </nav>
+</aside>
 
 <main id="top">
 <section class="hero">
@@ -299,6 +342,21 @@ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInter
 document.querySelectorAll('.rv:not(.in)').forEach(function(e){io.observe(e)});
 var pill=document.getElementById('pill'),hero=document.querySelector('.hero');
 new IntersectionObserver(function(es){es.forEach(function(e){pill.classList.toggle('show',!e.isIntersecting)})},{threshold:0}).observe(hero);
+
+// mobile menu
+var burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu'),scrim=document.getElementById('scrim');
+function setMenu(open){
+  burger.setAttribute('aria-expanded',open);
+  mm.classList.toggle('open',open);
+  mm.setAttribute('aria-hidden',!open);
+  if(open){scrim.hidden=false;requestAnimationFrame(function(){scrim.classList.add('open')});}
+  else{scrim.classList.remove('open');setTimeout(function(){scrim.hidden=true},350);}
+  document.body.classList.toggle('lock',open);
+}
+burger.addEventListener('click',function(){setMenu(burger.getAttribute('aria-expanded')!=='true')});
+scrim.addEventListener('click',function(){setMenu(false)});
+mm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenu(false)})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&burger.getAttribute('aria-expanded')==='true')setMenu(false)});
 </script>
 </body>
 </html>
