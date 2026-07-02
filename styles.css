@@ -81,6 +81,14 @@ h1.hero-h em{font-style:italic;color:var(--brass)}
 .stat b{font-family:'Newsreader',serif;font-weight:500;font-size:1.7rem;display:block;line-height:1.1}
 .stat span{font-size:.82rem;color:rgba(232,225,210,.6);letter-spacing:.02em}
 
+/* ---------- marquee strip ---------- */
+.marq{background:var(--forest);color:rgba(246,239,228,.92);overflow:hidden;position:relative;z-index:2}
+.marq .track{display:flex;white-space:nowrap;animation:marqscroll 36s linear infinite;will-change:transform}
+.marq span{font-family:'Newsreader',serif;font-style:italic;font-size:1.15rem;padding:17px 32px;display:inline-flex;align-items:center}
+.marq span::after{content:"\2666";color:var(--brass-2);margin-left:32px;font-style:normal;font-size:.66rem}
+.marq:hover .track,.marq:active .track{animation-play-state:paused}
+@keyframes marqscroll{to{transform:translateX(-50%)}}
+
 /* ---------- section base ---------- */
 section.block{padding:92px 0;position:relative;z-index:2}
 .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:44px}
@@ -224,4 +232,4 @@ footer{background:var(--ink);color:#d9d2c4;position:relative;z-index:2;padding:5
   section.block{padding:64px 0}.faq summary{font-size:1.12rem}
   .foot-grid{grid-template-columns:1fr}
 }
-@media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
+@media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}.marq .track{animation:none}html{scroll-behavior:auto}}
